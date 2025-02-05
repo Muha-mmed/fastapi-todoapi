@@ -6,5 +6,13 @@ class Todo(BaseModel):
     description : Optional[str] = None
     published : bool = False
 
-    class config:
+    class Config:
+        orm_mode = True
+        
+class UpdateTodo(BaseModel):
+    title:  Optional[str] = None
+    description : Optional[str] = None
+    published :  Optional[bool]=None
+    
+    class Config:
         orm_mode = True
