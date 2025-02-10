@@ -1,0 +1,13 @@
+# TODO API 
+
+this is a advance todo api built with fastapi and postgresql as the database. every part of this project is simple code show how to do the following:
+
+* Create Todo
+* Update Todo
+* Delete Todo
+* Read Todo
+* Get published Todos
+* Get Draft Todos
+* Get a single Todo
+* Search for Todo
+
