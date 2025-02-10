@@ -13,6 +13,3 @@ class UpdateTodo(BaseModel):
     title:  Optional[str] = None
     description : Optional[str] = None
     published :  Optional[bool]=None
-    
-    class Config:
-        orm_mode = True

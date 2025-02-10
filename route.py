@@ -1,61 +1,78 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from database import get_db,engine
 from schema import Todo,UpdateTodo
 import model
+from typing import List
+
 
 model.BASE.metadata.create_all(bind=engine)
 
 
 route = APIRouter()
 
-@route.get("/getallpost")
-def get_all_post(db: Session= Depends(get_db)):
-    posts = db.query(model.Todo).all()
-    if posts is None:
+@route.get("/getalltodos")
+def get_all_todo(db: Session= Depends(get_db)):
+    todos = db.query(model.Todo).all()
+    if todos is None:
         return []
-    return posts
+    return todos
 
-@route.post("/post/create")
-def create_post(todo:Todo,db: Session =Depends(get_db)):
+@route.post("/todo/create")
+def create_todo(todo:Todo,db: Session =Depends(get_db)):
     todoCont = model.Todo(**todo.model_dump())
     db.add(todoCont)
     db.commit()
     db.refresh(todoCont)
     return todoCont
 
-@route.put("/post/update/{post_id}", response_model=UpdateTodo)
-def update_post(new_post: UpdateTodo, post_id: int, db: Session = Depends(get_db)):
-    post = db.query(model.Todo).filter(model.Todo.id == post_id).first()
-    if not post:
-        return {"error": "Post not found"}
+@route.put("/todo/update/{post_id}", response_model=UpdateTodo)
+def update_todo(new_post: UpdateTodo, post_id: int, db: Session = Depends(get_db)):
+    todo = db.query(model.Todo).filter(model.Todo.id == post_id).first()
+    if not todo:
+        return {"error": "odo not found"}
     
     update_data = new_post.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
-        setattr(post, key, value)
+        setattr(todo, key, value)
         
     db.commit()
-    db.refresh(post)
-    return post
+    db.refresh(todo)
+    return todo
 
-@route.get("/published_post")
-def get_published_post(db: Session= Depends(get_db)):
+@route.get("/published_todo")
+def get_published_todos(db: Session= Depends(get_db)):
     published_todo = db.query(model.Todo).filter(model.Todo.published == True).all()
     return published_todo
 
-@route.get("/draft_post")
+@route.get("/draft_todo")
 def get_draft_post(db: Session= Depends(get_db)):
-    published_todo = db.query(model.Todo).filter(model.Todo.published == False).all()
-    return published_todo
+    draft_todo = db.query(model.Todo).filter(model.Todo.published == False).all()
+    return draft_todo
 
-@route.get("/getbyid/{post_id}")
-def get_by_id(post_id:int,db:Session =Depends(get_db)):
-    post = db.query(model.Todo).filter(model.Todo.id == post_id).first()
-    return post
+@route.get("/getbyid/{todo_id}")
+def get_by_id(todo_id:int,db:Session =Depends(get_db)):
+    todo = db.query(model.Todo).filter(model.Todo.id == todo_id).first()
+    return todo
 
-@route.delete("/delete/{post_id}")
-def delete_post(post_id:int,db:Session = Depends(get_db)):
-    post = db.query(model.Todo).filter(model.Todo.id == post_id).first()
-    db.delete(post)
+
+# Search endpoint
+@route.get("/search", response_model=List[Todo])
+def search_todo(name: str = Query(None), db: Session = Depends(get_db)):
+    query = db.query(model.Todo)
+    
+    if name:
+        query = query.filter(model.Todo.title.like(f"%{name}%") | model.Todo.description.like(f"%{name}%"))
+        todos = query.all()
+        if not todos:
+            return {"error": "No post found"}
+        return todos
+    return []
+
+
+@route.delete("/delete/{todo_id}")
+def delete_post(todo_id:int,db:Session = Depends(get_db)):
+    todo = db.query(model.Todo).filter(model.Todo.id == todo_id).first()
+    db.delete(todo)
     db.commit()
