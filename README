@@ -1,13 +1,74 @@
-# TODO API 
+# Advanced To-Do API
 
-this is a advance todo api built with fastapi and postgresql as the database. every part of this project is simple code show how to do the following:
+This is an advanced To-Do API built with **FastAPI** and **PostgreSQL** as the database. The project demonstrates how to perform CRUD operations and additional functionalities such as searching and filtering To-Dos.
 
-* Create Todo
-* Update Todo
-* Delete Todo
-* Read Todo
-* Get published Todos
-* Get Draft Todos
-* Get a single Todo
-* Search for Todo
+## Features
+The API provides the following functionalities:
+- **Create Todo**: Add a new task to the database.
+- **Update Todo**: Modify an existing task.
+- **Delete Todo**: Remove a task from the database.
+- **Read Todo**: Retrieve all tasks.
+- **Get Published Todos**: Fetch all tasks that are marked as published.
+- **Get Draft Todos**: Fetch all tasks that are saved as drafts.
+- **Get a Single Todo**: Retrieve a specific task by its ID.
+- **Search for Todo**: Find tasks based on a search query.
+
+## Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Muha-mmed/fastapi-todoapi
+   cd todo-api
+   ```
+2. **Create a Virtual Environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Set Up Environment Variables**
+   Create a `.env` file and add your database configuration:
+   ```
+   DATABASE_URL=postgresql://username:password@localhost/todo_db
+   ```
+
+5. **Run Database Migrations** (If using Alembic or SQLModel)
+   ```bash
+   alembic upgrade head
+   ```
+
+6. **Start the FastAPI Server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+## API Endpoints
+
+| Method | Endpoint           | Description                  |
+|--------|-------------------|------------------------------|
+| POST   | `/todos/`         | Create a new To-Do           |
+| PUT    | `/todos/{id}`     | Update a To-Do by ID         |
+| DELETE | `/todos/{id}`     | Delete a To-Do by ID         |
+| GET    | `/todos/`         | Retrieve all To-Dos          |
+| GET    | `/todos/{id}`     | Get a single To-Do by ID     |
+| GET    | `/todos/published`| Get all published To-Dos     |
+| GET    | `/todos/drafts`   | Get all draft To-Dos         |
+| GET    | `/todos/search`   | Search for To-Dos by title   |
+
+## Example Request
+```bash
+curl -X POST "http://127.0.0.1:8000/todos/" \
+     -H "Content-Type: application/json" \
+     -d '{"title": "Buy groceries", "description": "Milk, Eggs, Bread"}'
+```
+
+## License
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+### Contributors
+If you'd like to contribute, feel free to submit a pull request!
 
